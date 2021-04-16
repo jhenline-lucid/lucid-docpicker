@@ -10,44 +10,69 @@
             input {
                 width: 800px;
             }
+            .hide {
+                display: none;
+            }
         </style>
     </head>
     <body>
-        <div>
-            <label>Host
-                <input type="text" id="hostInput" value="a.lucidpress.ninja">
-            </label>
-        </div>
-        <div>
-            <label>Client ID
-                <input type="text" id="clientIdInput">
-            </label>
-        </div>
-        <div>
-            <label>Client Secret
-                <input type="text" id="clientSecretInput">
-            </label>
-        </div>
-        <div>
-            <label>Scopes
-                <input type="text" id="scopesInput" value="lucidpress.document.app.picker">
-            </label>
-        </div>
+        <h1>Parameters</h1>
+        <table>
+            <tbody>
+                <tr>
+                    <td>Host:</td>
+                    <td>
+                        <input type="text" id="hostInput" placeholder="a.lucidpress.ninja">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Client ID:</td>
+                    <td>
+                        <input type="text" id="clientIdInput">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Client Secret:</td>
+                    <td>
+                        <input type="text" id="clientSecretInput">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Scopes:</td>
+                    <td>
+                        <input type="text" id="scopesInput" placeholder="lucidpress.document.app.picker">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         <div>
             <button id="getAuthCodeButton">Click to get an auth code</button>
         </div>
         <div>
             <button id="pickDocumentButton">Click to pick a document</button>
         </div>
-        <div>
-            <div>Status</div>
-            <div id="statusElement"></div>
-            <div>Document ID</div>
-            <div id="documentIdElement"></div>
-            <div>Document Title</div>
-            <div id="documentTitleElement"></div>
-            <div>Page</div>
-            <div id="documentPageElement"></div>
+        <div id="resultsDiv" class="hide">
+            <h1>Results</h1>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Status</td>
+                        <td id="statusElement"></td>
+                    </tr>
+                    <tr>
+                        <td>Document ID</td>
+                        <td id="documentIdElement"></td>
+                    </tr>
+                    <tr>
+                        <td>Document Title</td>
+                        <td id="documentTitleElement"></td>
+                    </tr>
+                    <tr>
+                        <td>Page</td>
+                        <td id="documentPageElement"></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <script>
@@ -61,15 +86,19 @@
             })
 
             function pickADocument(accessToken) {
+                let iframe = undefined;
+
                 window.addEventListener('message', event => {
                     statusElement.innerHTML = event.data['status'];
                     documentIdElement.innerHTML = event.data['documentId'];
                     documentTitleElement.innerHTML = event.data['title'];
                     documentPageElement.innerHTML = event.data['page']
+                    resultsDiv.classList.remove('hide');
+                    document.body.remove(iframe);
                 });
 
                 const host = hostInput.value;
-                const iframe = document.createElement('iframe');
+                iframe = document.createElement('iframe');
                 iframe.src = `https://${host}/documents/picker?token=${accessToken}`;
                 document.body.appendChild(iframe);
             }
