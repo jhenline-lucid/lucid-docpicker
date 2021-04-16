@@ -51,6 +51,15 @@
         </div>
 
         <script>
+            const storedDataMap = new Map([['host', hostInput], ['clientId', clientIdInput], ['clientSecret', clientSecretInput], ['scopes', scopesInput]]);
+            storedDataMap.forEach((inputElement, key) => {
+                const storedValue = window.localStorage.getItem(key);
+                if (storedValue) {
+                    inputElement.value = storedValue;
+                }
+                inputElement.addEventListener('input', () => window.localStorage.setItem(key, inputElement.value));
+            })
+
             function pickADocument(accessToken) {
                 window.addEventListener('message', event => {
                     statusElement.innerHTML = event.data['status'];
