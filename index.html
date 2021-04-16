@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test App for Lucid External Doc Picker</title>
+        <style>
+            iframe {
+                width: 800px;
+                height: 500px;
+            }
+            input {
+                width: 800px;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <label>Host
+                <input type="text" id="hostInput" value="a.lucidpress.ninja">
+            </label>
+        </div>
+        <div>
+            <label>Client ID
+                <input type="text" id="clientIdInput">
+            </label>
+        </div>
+        <div>
+            <label>Client Secret
+                <input type="text" id="clientSecretInput">
+            </label>
+        </div>
+        <div>
+            <label>Scopes
+                <input type="text" id="scopesInput" value="lucidpress.document.app.picker">
+            </label>
+        </div>
+        <div>
+            <button id="getAuthCodeButton">Click to get an auth code</button>
+        </div>
+        <div>
+            <button id="pickDocumentButton">Click to pick a document</button>
+        </div>
+        <div>
+            <div>Status</div>
+            <div id="statusElement"></div>
+            <div>Document ID</div>
+            <div id="documentIdElement"></div>
+            <div>Document Title</div>
+            <div id="documentTitleElement"></div>
+            <div>Page</div>
+            <div id="documentPageElement"></div>
+        </div>
+
+        <script>
+            function pickADocument(accessToken) {
+                window.addEventListener('message', event => {
+                    statusElement.innerHTML = event.data['status'];
+                    documentIdElement.innerHTML = event.data['documentId'];
+                    documentTitleElement.innerHTML = event.data['title'];
+                    documentPageElement.innerHTML = event.data['page']
+                });
+
+                const host = hostInput.value;
+                const iframe = document.createElement('iframe');
+                iframe.src = `https://${host}/documents/picker?token=${accessToken}`;
+                document.body.appendChild(iframe);
+            }
+
+            getAuthCodeButton.addEventListener('click', () => {
+                const clientId = clientIdInput.value;
+                const host = hostInput.value;
+                const scopes = scopesInput.value;
+                const thisUrl = new URL(window.location.href);
+                const redirectUri = thisUrl.origin + thisUrl.pathname;
+                window.location.href = `https://${host}/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scopes=${scopes}`;
+            });
+
+            pickDocumentButton.addEventListener('click', () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const oAuthCode = urlParams.get('code') || undefined;
+                const clientId = clientIdInput.value;
+                const clientSecret = clientSecretInput.value;
+                const body = `grant_type=authorization_code&code=${oAuthCode}&client_id=${clientId}&client_secret=${clientSecret}`
+
+                const host = hostInput.value;
+                const oAuthTokenUrl = `https://users-${host}/oauth2/token`;
+
+                const responsePromise =
+                    fetch(
+                        oAuthTokenUrl,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'Accept': 'application/json'
+                            },
+                            body
+                        }
+                    );
+                
+                responsePromise.then(response => {
+                    const json = response.json();
+                    const accessToken = json['access_token'];
+                    pickADocument(accessToken);
+                });
+            })
+        </script>
+    </body>
+</html>
