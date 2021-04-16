@@ -94,7 +94,7 @@
                     documentTitleElement.innerHTML = event.data['title'];
                     documentPageElement.innerHTML = event.data['page']
                     resultsDiv.classList.remove('hide');
-                    document.body.remove(iframe);
+                    document.body.removeChild(iframe);
                 });
 
                 const host = hostInput.value;
