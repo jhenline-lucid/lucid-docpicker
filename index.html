@@ -106,9 +106,8 @@
                         }
                     );
                 
-                responsePromise.then(response => {
-                    const json = response.json();
-                    const accessToken = json['access_token'];
+                responsePromise.then(response => response.json()).then(data => {
+                    const accessToken = data['access_token'];
                     pickADocument(accessToken);
                 });
             })
