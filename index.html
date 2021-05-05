@@ -98,8 +98,9 @@
                     resultsDiv.classList.remove('hide');
                     document.body.removeChild(iframe);
 
+                    const host = hostInput.value;
                     const responsePromise = fetch( 
-                        `https://api.lucid.co/documents/${documentId}`,
+                        `https://${host}/documents/${documentId}`,
                         {
                             headers: {
                                 'Authorization': `Bearer ${accessToken}`,
