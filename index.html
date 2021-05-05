@@ -100,7 +100,7 @@
 
                     const host = hostInput.value;
                     const responsePromise = fetch( 
-                        `https://${host}/documents/${documentId}`,
+                        `https://api.lucid.co/documents/${documentId}`,
                         {
                             headers: {
                                 'Authorization': `Bearer ${accessToken}`,
