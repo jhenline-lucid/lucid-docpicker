@@ -89,12 +89,27 @@
                 let iframe = undefined;
 
                 window.addEventListener('message', event => {
+                    const documentId = event.data['documentId'];
+
                     statusElement.innerHTML = event.data['status'];
                     documentIdElement.innerHTML = event.data['documentId'];
                     documentTitleElement.innerHTML = event.data['title'];
                     documentPageElement.innerHTML = event.data['page']
                     resultsDiv.classList.remove('hide');
                     document.body.removeChild(iframe);
+
+                    const responsePromise = fetch( 
+                        `https://api.lucid.co/documents/${documentId}`,
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'image/jpg',
+                                'Lucid-Api-Version': '1'
+                            }
+                        }
+                    );
+
+                    responsePromise.then(response => console.log('Got export document response'));
                 });
 
                 const host = hostInput.value;
