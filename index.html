@@ -118,9 +118,11 @@
 
                     responsePromise.then(response => {
                         console.log('Got export document response')
-                        const b64Response = btoa(response.body);
+                        return response.blob();
+                    }).then(blob => {
+                        const objectURL = URL.createObjectURL(blob);
                         const imgElement = document.createElement('img');
-                        imgElement.src = 'data:image/png;base64,' + b64Response;
+                        imgElement.src = objectUrl;
                         document.body.appendChild(imgElement);
                     });
                 });
