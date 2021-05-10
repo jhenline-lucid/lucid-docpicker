@@ -83,7 +83,12 @@
                     inputElement.value = storedValue;
                 }
                 inputElement.addEventListener('input', () => window.localStorage.setItem(key, inputElement.value));
-            })
+            });
+
+            function isDevHostName(hostName) {
+                const substrings = ['lucidstaging.app', 'lucidpress.ninja', 'luciddev.app'];
+                return substrings.some(substring => hostName.includes(substring));
+            }
 
             function pickADocument(accessToken) {
                 let iframe = undefined;
@@ -99,8 +104,9 @@
                     document.body.removeChild(iframe);
 
                     const host = hostInput.value;
+                    const exportHost = isDevHostName(host) ? `api-${host}` : 'api.lucid.co';
                     const responsePromise = fetch( 
-                        `https://api.lucid.co/documents/${documentId}`,
+                        `https://${exportHost}/documents/${documentId}`,
                         {
                             headers: {
                                 'Authorization': `Bearer ${accessToken}`,
@@ -136,7 +142,8 @@
                 const body = `grant_type=authorization_code&code=${oAuthCode}&client_id=${clientId}&client_secret=${clientSecret}`
 
                 const host = hostInput.value;
-                const oAuthTokenUrl = `https://users.${host}/oauth2/token`;
+                const separator = isDevHostName(host) ? '-' : '.';
+                const oAuthTokenUrl = `https://users${separator}${host}/oauth2/token`;
 
                 const responsePromise =
                     fetch(
