@@ -120,7 +120,7 @@
                         console.log('Got export document response')
                         return response.blob();
                     }).then(blob => {
-                        const objectURL = URL.createObjectURL(blob);
+                        const objectUrl = URL.createObjectURL(blob);
                         const imgElement = document.createElement('img');
                         imgElement.src = objectUrl;
                         document.body.appendChild(imgElement);
