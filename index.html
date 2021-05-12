@@ -97,8 +97,6 @@
                 let iframe = undefined;
 
                 window.addEventListener('message', event => {
-                    const documentId = event.data['documentId'];
-
                     statusElement.innerHTML = event.data['status'];
                     documentIdElement.innerHTML = event.data['documentId'];
                     documentTitleElement.innerHTML = event.data['title'];
@@ -106,10 +104,19 @@
                     resultsDiv.classList.remove('hide');
                     document.body.removeChild(iframe);
 
+                    const documentId = event.data['documentId'];
+                    const pageId = event.data['page'];
+
                     const host = hostInput.value;
                     const exportHost = isDevHostName(host) ? `api-${host}` : 'api.lucid.co';
+
+                    const exportUrl = new URL(`https://${exportHost}/documents/${documentId}`);
+                    if (pageId !== undefined) {
+                        exportUrl.searchParams.append('pageId', pageId);
+                    }
+
                     const responsePromise = fetch( 
-                        `https://${exportHost}/documents/${documentId}`,
+                        exportUrl,
                         {
                             headers: {
                                 'Authorization': `Bearer ${accessToken}`,
