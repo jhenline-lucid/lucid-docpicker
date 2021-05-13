@@ -112,7 +112,7 @@
 
                     const exportUrl = new URL(`https://${exportHost}/documents/${documentId}`);
                     if (pageId !== undefined) {
-                        exportUrl.searchParams.append('pageId', pageId);
+                        exportUrl.searchParams.append('page', Number(pageId) + 1);
                     }
 
                     const responsePromise = fetch( 
