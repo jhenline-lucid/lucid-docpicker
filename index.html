@@ -132,6 +132,7 @@
                     }).then(blob => {
                         const objectUrl = URL.createObjectURL(blob);
                         const imgElement = document.createElement('img');
+                        imgElement.width = 400;
                         imgElement.src = objectUrl;
                         document.body.appendChild(imgElement);
                     });
